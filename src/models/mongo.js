@@ -293,7 +293,6 @@ const UserTokenSchema = new Schema({
     created_at: { type: Date, required: true, default: Date.now },
     updated_at: { type: Date, required: true, default: Date.now }
 });
-
 UserTokenSchema.pre('save', function (next) {
     now = new Date();
     this.updated_at = now;
@@ -304,6 +303,33 @@ UserTokenSchema.pre('save', function (next) {
 });
 
 UserTokenSchema.plugin(mongoosePaginate);
+
+// farming Prodect Models Start
+
+const ProductSchema = new Schema({
+    product_id: { type: String, required: true },
+    name: { type: String, required: true },
+    description: { type: String },
+    category: { type: String, required: true },
+    price: { type: Number, required: true },
+    discount_price: { type: Number },
+    stock: { type: Number, required: true },
+    unit: { type: String, default: 'kg' },
+    image_url: { type: String },
+    is_available: { type: Boolean, default: true },
+    status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
+    created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now }
+  });
+
+  ProductSchema.pre('save', function (next) {
+    now = new Date();
+    this.updated_at = now;
+    if (!this.created_at) {
+        this.created_at = now;
+    }
+    next();
+});
 
 const auditLogSchema = new Schema({
     timestamp: { type: Date, default: Date.now },
@@ -329,4 +355,5 @@ module.exports = {
     WebhookEvent: mongoose.model('WebhookEvent', WebhookEventSchema),
     UserToken: mongoose.model('UserToken', UserTokenSchema),
     AuditLog: mongoose.model('AuditLog', auditLogSchema),
+    Product: mongoose.model('Product',ProductSchema)
 }
