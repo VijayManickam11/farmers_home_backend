@@ -15,7 +15,7 @@ const serverConfig = require("../../config/environment/serverConfig");
 
 const createProducts = async function (req, res) {
     var product_data = req.body;
-    console.log(product_data,"product_data")
+    
     if (!product_data.name || !product_data.category || !product_data.price || !product_data.stock || product_data.is_available === undefined) {
         res.status(Constants.BAD_REQUEST);
         return res.send({ type: Constants.ERROR_MSG, message: "Mandatory Data Missing" });
@@ -33,7 +33,142 @@ const createProducts = async function (req, res) {
 }
 
 
+const updateProduct = async function (req, res) {
+
+    try {
+        
+        const productId = req.params.product_id;  
+        const updateData = req.body;  
+        
+        if (!productId) {
+            return res.status(Constants.BAD_REQUEST).send({ type: Constants.ERROR_MSG, message: "Product ID Missing" });
+        }
+
+        // Update
+        const updatedProduct = await Product.findOneAndUpdate(
+            { product_id: productId }, 
+            { ...updateData, updated_at: new Date() },
+            { new: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(Constants.NOT_FOUND).send({ type: Constants.ERROR_MSG, message: "Product not found" });
+        }
+
+        return res.status(Constants.SUCCESS).send({ type: Constants.SUCCESS_MSG, message: "Product updated successfully", data: updatedProduct });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(Constants.INTERNAL_ERROR).send({ type: Constants.ERROR_MSG, message: "Internal server error" });
+    }
+}
+
+const getAllProducts = async function (req, res) {
+    try {
+        
+        const getProducts = await Product.find({}).lean();
+        console.log(getProducts,"product_data")
+        return res.status(Constants.SUCCESS).send({
+            type: Constants.SUCCESS_MSG,
+            message: "Products fetched successfully",
+            data: getProducts
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(Constants.INTERNAL_ERROR).send({
+            type: Constants.ERROR_MSG,
+            message: "Internal server error"
+        });
+    }
+}
+
+const getSingleProducts = async function (req, res) {
+    try {
+        let productId = req.params.product_id;
+        
+        if (!productId) {
+            res.status(Constants.BAD_REQUEST);
+            return res.send({ type: Constants.ERROR_MSG, message: "Mandatory Data Missing" });
+        }   
+       
+        let product_db = await Product.findOne({ product_id: String(productId)});
+
+        
+
+        if (!product_db) {
+            res.status(Constants.NOT_FOUND);
+            return res.send({ type: Constants.ERROR_MSG, message: "Invalid ID" });
+        }
+
+        res.status(Constants.SUCCESS);
+        return res.send({
+            type: Constants.SUCCESS_MSG,
+            data: product_db
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(Constants.INTERNAL_ERROR);
+        return res.send({ type: Constants.ERROR_MSG, message: Constants.INTERNAL_SERVER_ERROR });
+    }
+};
+
+const deleteProducts = async function (req, res) {
+    let productId = req.params.product_id;
+
+    // Validate the product ID parameter
+    if (!productId) {
+        return res.status(Constants.BAD_REQUEST).send({
+            type: Constants.ERROR_MSG,
+            message: "Mandatory Data Missing"
+        });
+    }
+
+    
+    let product_db = await Product.findOne({ product_id: String(productId) });
+
+    console.log("Requested Product:", product_db);
+
+    
+    if (!product_db) {
+        return res.status(Constants.NOT_FOUND).send({
+            type: Constants.ERROR_MSG,
+            message: "Invalid UID"
+        });
+    }
+
+    
+    if (!product_db.is_deleted) {
+        product_db.is_deleted = false;  
+    }
+
+    
+    product_db.is_deleted = true;
+
+    
+    let updated_data = await product_db.save();
+
+   
+    if (updated_data) {
+        return res.send({
+            type: Constants.SUCCESS_MSG,
+            message: Constants.DELETION_SUCCESS
+        });
+    } else {
+        return res.status(Constants.INTERNAL_ERROR).send({
+            type: Constants.ERROR_MSG,
+            message: Constants.INTERNAL_SERVER_ERROR
+        });
+    }
+};
+
+
+
 
 module.exports = {
-    createProducts: createProducts,    
+    createProducts    : createProducts, 
+    updateProduct     : updateProduct, 
+    getAllProducts    : getAllProducts,
+    getSingleProducts : getSingleProducts,
+    deleteProducts    : deleteProducts
 }

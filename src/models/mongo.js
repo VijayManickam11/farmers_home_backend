@@ -319,7 +319,8 @@ const ProductSchema = new Schema({
     is_available: { type: Boolean, default: true },
     status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
     created_at: { type: Date, default: Date.now },
-    updated_at: { type: Date, default: Date.now }
+    updated_at: { type: Date, default: Date.now },
+    is_deleted: { type: Boolean, default: false }  // Added for soft deletion
   });
 
   ProductSchema.pre('save', function (next) {
