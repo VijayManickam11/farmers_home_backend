@@ -4,11 +4,11 @@ const { Router } = require("express");
 
 const app = Router();
 
-app.post("/products", products.createProducts);
-app.put("/products/:product_id", products.updateProduct);
+app.post("/product", products.createProducts);
+app.put("/product/:product_uid", products.updateProduct);
 app.get("/products", products.getAllProducts);
-app.get("/products/:product_id", products.getSingleProducts);
-app.delete("/products/:product_id", products.deleteProducts);
+app.get("/product/:product_uid", products.getSingleProducts);
+app.delete("/product/:product_uid", products.deleteProducts);
 
 
 module.exports = app;

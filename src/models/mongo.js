@@ -307,7 +307,7 @@ UserTokenSchema.plugin(mongoosePaginate);
 // farming Prodect Models Start
 
 const ProductSchema = new Schema({
-    product_id: { type: String, required: true },
+    product_uid: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String },
     category: { type: String, required: true },
