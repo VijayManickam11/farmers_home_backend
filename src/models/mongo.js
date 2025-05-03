@@ -320,6 +320,7 @@ const ProductSchema = new Schema({
     status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
+    is_active: { type: Boolean, default: true },
     is_deleted: { type: Boolean, default: false }  // Added for soft deletion
   });
 
