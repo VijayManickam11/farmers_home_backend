@@ -315,7 +315,7 @@ const ProductSchema = new Schema({
     discount_price: { type: Number },
     stock: { type: Number, required: true },
     unit: { type: String, default: 'kg' },
-    image_url: { type: String },
+    base64Image: { type: String, default: "" },
     is_available: { type: Boolean, default: true },
     status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
     created_at: { type: Date, default: Date.now },

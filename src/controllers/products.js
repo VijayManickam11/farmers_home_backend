@@ -28,6 +28,18 @@ const createProducts = async function (req, res) {
     });
   }
 
+  const image_file = req.file;
+
+  if (image_file) {
+    const base64 = image_file.buffer.toString("base64");
+    const mimeType = image_file.mimetype;
+    const base64Image = `data:${mimeType};base64,${base64}`;
+
+    if (base64Image) {
+      product_data["base64Image"] = base64Image;
+    }
+  }
+
   product_data["product_uid"] = uuidv1();
 
   let saved_data = await Product(product_data).save();
@@ -55,6 +67,18 @@ const updateProduct = async function (req, res) {
       return res
         .status(Constants.BAD_REQUEST)
         .send({ type: Constants.ERROR_MSG, message: "Product ID Missing" });
+    }
+
+    const image_file = req.file;
+
+    if (image_file) {
+      const base64 = image_file.buffer.toString("base64");
+      const mimeType = image_file.mimetype;
+      const base64Image = `data:${mimeType};base64,${base64}`;
+
+      if (base64Image) {
+        updateData["base64Image"] = base64Image;
+      }
     }
 
     // Update
@@ -89,7 +113,7 @@ const getAllProducts = async function (req, res) {
       is_active: true,
       is_deleted: false,
     }).lean();
-    console.log(getProducts, "product_data");
+
     return res.status(Constants.SUCCESS).send({
       type: Constants.SUCCESS_MSG,
       message: "Products fetched successfully",
