@@ -128,60 +128,6 @@ UserSchema.pre('save', function (next) {
 });
 UserSchema.plugin(mongoosePaginate);
 
-const JobSchema = new Schema({
-    job_uid: { type: String, required: true },
-    employer: { type: Schema.Types.ObjectId, ref: 'Employer' },
-    country_id: { type: Schema.Types.ObjectId, ref: 'Country' },
-    state_id: { type: Schema.Types.ObjectId, ref: 'State' },
-    city_id: { type: Schema.Types.ObjectId, ref: 'City' },
-    country: { type: String },
-    state: { type: String },
-    city: { type: String },
-    title: { type: String, required: true },
-    comments: { type: String },
-    address: { type: String },
-    zip_code: { type: String },
-    preferred_gender: { type: String },
-    predefined_languages: [{
-        language_id: { type: Schema.Types.ObjectId, ref: 'Language' },
-        language_name: { type: String }
-    }],
-    predefined_questions: [{
-        question_id: { type: Schema.Types.ObjectId, ref: 'Question' },
-        question: { type: String },
-        filter_keyword: { type: String },
-        answer: { type: String }
-    }],
-    additional_questions: [{
-        question_id: { type: Schema.Types.ObjectId, ref: 'Question' },
-        question: { type: String },
-        answer: { type: String },
-        filter_keyword: { type: String }
-    }],
-    available_days: [{
-        day: { type: String },
-        availability: { type: Boolean }
-    }],
-    no_of_matches: { type: Number, default: 0 },
-    in_use: { type: Boolean, default: false },
-    is_active: { type: Boolean, default: true },
-    is_deleted: { type: Boolean, default: false },
-    created_by: { type: String },
-    updated_by: { type: String },
-    no_of_hours_per_day: { type: String },
-    created_at: { type: Date, required: true, default: Date.now },
-    updated_at: { type: Date, required: true, default: Date.now }
-})
-JobSchema.pre('save', function (next) {
-    now = new Date();
-    this.updated_at = now;
-    if (!this.created_at) {
-        this.created_at = now;
-    }
-    next();
-});
-JobSchema.plugin(mongoosePaginate);
-
 const UserOTPSchema = new Schema({
     otp_uid: { type: String, required: true },
     user_uid: { type: String, required: true },
@@ -333,6 +279,27 @@ const ProductSchema = new Schema({
     next();
 });
 
+
+const CartSchema = new Schema({
+    cart_uid: { type: String, required: true },
+    // user: { type: Schema.Types.ObjectId, ref: 'User' },
+    product: { type: Schema.Types.ObjectId, ref: 'Product' },
+    quantity: { type: Number, default: 1 },
+    is_active: { type: Boolean, default: true },
+    is_deleted: { type: Boolean, default: false },
+    created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now },
+  });
+
+  CartSchema.pre('save', function (next) {
+    now = new Date();
+    this.updated_at = now;
+    if (!this.created_at) {
+        this.created_at = now;
+    }
+    next();
+});
+
 const auditLogSchema = new Schema({
     timestamp: { type: Date, default: Date.now },
     log_subject: { type: String },
@@ -350,12 +317,12 @@ module.exports = {
     State: mongoose.model('State', StateSchema),
     City: mongoose.model('City', CitySchema),
     User: mongoose.model('User', UserSchema),
-    Job: mongoose.model('Job', JobSchema),
     UserOTP: mongoose.model('User_OTP', UserOTPSchema),
     Session: mongoose.model('Session', SessionSchema),
     Location: mongoose.model('Location', LocationSchema),
     WebhookEvent: mongoose.model('WebhookEvent', WebhookEventSchema),
     UserToken: mongoose.model('UserToken', UserTokenSchema),
     AuditLog: mongoose.model('AuditLog', auditLogSchema),
-    Product: mongoose.model('Product',ProductSchema)
+    Product: mongoose.model('Product',ProductSchema),
+    Cart: mongoose.model('Cart',CartSchema)
 }

@@ -28,13 +28,14 @@ const CryptoJS = require("crypto-js");
 
 const register = async function (req, res) {
   let email = req.body.email;
-  let user_name = req.body.full_name;
+  let full_name = req.body.full_name;
+  let password = req.body.key;
   let mobile_number = req.body.mobile_number;
   let accessToken;
 
   const req_data = req.body;
 
-  if (!email && !mobile_number) {
+  if (!email && !mobile_number && !password && !full_name ) {
     res.status(Constants.BAD_REQUEST);
     return res.send({
       type: Constants.ERROR_MSG,
@@ -42,31 +43,31 @@ const register = async function (req, res) {
     });
   }
 
-  if (email) {
-    email = email.toLowerCase();
-    let email_regex = Constants.EMAIL_REGEX;
-    email = email.replace(/^\s+|\s+$/g, "");
-    user_name = user_name ? user_name.replace(/^\s+|\s+$/g, "") : null;
-    mobile_number = mobile_number
-      ? mobile_number.replace(/^\s+|\s+$/g, "")
-      : null;
-    let is_email = await Util.isEmailValid(email);
+  // if (email) {
+  //   email = email.toLowerCase();
+  //   let email_regex = Constants.EMAIL_REGEX;
+  //   email = email.replace(/^\s+|\s+$/g, "");
+  //   // user_name = user_name ? user_name.replace(/^\s+|\s+$/g, "") : null;
+  //   // mobile_number = mobile_number
+  //   //   ? mobile_number.replace(/^\s+|\s+$/g, "")
+  //   //   : null;
+  //   let is_email = await Util.isEmailValid(email);
 
-    if (!email_regex.test(email)) {
-      //|| !is_email.valid) {
-      res.status(Constants.BAD_REQUEST);
-      return res.send({ type: Constants.ERROR_MSG, message: "Invalid Email" });
-    }
-  }
+  //   if (!email_regex.test(email)) {
+  //     //|| !is_email.valid) {
+  //     res.status(Constants.BAD_REQUEST);
+  //     return res.send({ type: Constants.ERROR_MSG, message: "Invalid Email" });
+  //   }
+  // }
 
-  //Mobile Number Validation if available
-  if (mobile_number) {
-    let is_mobile = await Util.isMobileValid(mobile_number);
-    if (!is_mobile) {
-      res.status(Constants.BAD_REQUEST);
-      return res.send({ type: Constants.ERROR_MSG, message: "Invalid Mobile" });
-    }
-  }
+  // //Mobile Number Validation if available
+  // if (mobile_number) {
+  //   let is_mobile = await Util.isMobileValid(mobile_number);
+  //   if (!is_mobile) {
+  //     res.status(Constants.BAD_REQUEST);
+  //     return res.send({ type: Constants.ERROR_MSG, message: "Invalid Mobile" });
+  //   }
+  // }
 
   //CHECK EMAIL UNIQUENESS
   let query = { is_deleted: false };
@@ -151,10 +152,6 @@ const register = async function (req, res) {
     full_name: user_name,
     mobile_number: mobile_number || null,
     address: req_data.address || "",
-    zip_code: req_data.zip_code || "",
-    country: req_data.country || "",
-    state: req_data.state || "",
-    city: req_data.city || ""
   };
 
   let saved_data = await User(user_data).save();
@@ -166,36 +163,36 @@ const register = async function (req, res) {
   let otpSentToEmail = false;
 
   // Send OTP to mobile number if provided
-  if (mobile_number) {
-    await User_Otp.create({
-      otp_uid: uuidv1(),
-      user_uid: saved_data.user_uid,
-      otp: mobileOtp,
-      device_type_otp: "MOBILE",
-      mobile_number: mobile_number,
-      user_type: "CUSTOMER",
-      user: saved_data._id,
-      type: "REGISTER",
-      expire_at: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
-    });
-  }
+  // if (mobile_number) {
+  //   await User_Otp.create({
+  //     otp_uid: uuidv1(),
+  //     user_uid: saved_data.user_uid,
+  //     otp: mobileOtp,
+  //     device_type_otp: "MOBILE",
+  //     mobile_number: mobile_number,
+  //     user_type: "CUSTOMER",
+  //     user: saved_data._id,
+  //     type: "REGISTER",
+  //     expire_at: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+  //   });
+  // }
 
   // Send OTP to email if provided
-  if (email) {
-    await User_Otp.create({
-      otp_uid: uuidv1(),
-      user_uid: saved_data.user_uid,
-      otp: emailOtp,
-      device_type_otp: "EMAIL",
-      email: email,
-      user_type: "CUSTOMER",
-      user: saved_data._id,
-      type: "REGISTER",
-      expire_at: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
-    });
-  }
+  // if (email) {
+  //   await User_Otp.create({
+  //     otp_uid: uuidv1(),
+  //     user_uid: saved_data.user_uid,
+  //     otp: emailOtp,
+  //     device_type_otp: "EMAIL",
+  //     email: email,
+  //     user_type: "CUSTOMER",
+  //     user: saved_data._id,
+  //     type: "REGISTER",
+  //     expire_at: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+  //   });
+  // }
 
-  let otpStatusMessage = "OTP sent successfully.";
+  let otpStatusMessage = "Registered successfully";
   //   if ((!otpSentToMobile && mobile_number) || (!otpSentToEmail && email)) {
   //     otpStatusMessage = "Error sending OTP via ";
   //     if (!otpSentToMobile && mobile_number) {
