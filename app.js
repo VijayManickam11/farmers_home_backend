@@ -16,6 +16,7 @@ const session = require("./src/routes/session");
 const location = require("./src/routes/location");
 const products = require("./src/routes/products");
 const cart = require("./src/routes/cart");
+const register = require("./src/routes/register");
 
 // New app using express module
 const app = express();
@@ -46,6 +47,7 @@ app.use(session);
 app.use(location);
 app.use(products);
 app.use(cart);
+app.use(register);
 
 app.get('/', (req, res) =>
 	res.json({ message: "Welcome to Farmer Application!!!" })

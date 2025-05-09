@@ -309,6 +309,44 @@ const auditLogSchema = new Schema({
     updated_at: { type: Date, required: true, default: Date.now }
 });
 
+// const userSchema = new mongoose.Schema({
+//     email: String,
+//     password: String,
+//     resetPasswordToken: String,
+//     resetPasswordExpires: Date
+// });
+
+
+const registerSchema = new Schema({
+  uid: { type: String, required: true, unique: true },
+  full_name: { type: String, required: true, trim: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/.+\@.+\..+/, 'Please fill a valid email address'],
+  },
+  mobile_number: {
+    type: String,
+    unique: true,
+    required: true,
+    match: [/^\d{10}$/, 'Please fill a valid 10-digit mobile number'],
+  },
+  user_address: { type: String, default: '' },
+  password: { type: String, required: true, minlength: 8 },
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  is_verified: { type: Boolean, default: false },
+  created_at: { type: Date, default: Date.now }
+});
+// userSchema.pre('save', async function (next) {
+//   if (this.isModified('password')) {
+//     const hash = await bcrypt.hash(this.password, 10);
+//     this.password = hash;
+//   }
+//   next();
+// });
 
 // Export the schema to register with MongoDB
 module.exports = {
@@ -324,5 +362,6 @@ module.exports = {
     UserToken: mongoose.model('UserToken', UserTokenSchema),
     AuditLog: mongoose.model('AuditLog', auditLogSchema),
     Product: mongoose.model('Product',ProductSchema),
-    Cart: mongoose.model('Cart',CartSchema)
+    Cart: mongoose.model('Cart',CartSchema),
+    Register : mongoose.model("Register", registerSchema)
 }
