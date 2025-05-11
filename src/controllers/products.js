@@ -109,10 +109,17 @@ const updateProduct = async function (req, res) {
 
 const getAllProducts = async function (req, res) {
   try {
-    const getProducts = await Product.find({
+   const category = req.query.category;
+    let query = {
       is_active: true,
       is_deleted: false,
-    }).lean();
+    };
+
+    if (category && category !== "All") {
+      query.category = category;
+    }
+
+    const getProducts = await Product.find(query).lean();
 
     return res.status(Constants.SUCCESS).send({
       type: Constants.SUCCESS_MSG,
