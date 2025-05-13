@@ -18,6 +18,7 @@ const products = require("./src/routes/products");
 const cart = require("./src/routes/cart");
 const register = require("./src/routes/register");
 const userLogin = require("./src/routes/login");
+const whishlist = require("./src/routes/whishlist");
 
 // New app using express module
 const app = express();
@@ -49,7 +50,8 @@ app.use(location);
 app.use(products);
 app.use(cart);
 app.use(register);
-app.use(userLogin)
+app.use(userLogin);
+app.use(whishlist);
 
 app.get('/', (req, res) =>
 	res.json({ message: "Welcome to Farmer Application!!!" })

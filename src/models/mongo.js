@@ -340,15 +340,21 @@ const registerSchema = new Schema({
   is_verified: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now }
 });
-// userSchema.pre('save', async function (next) {
-//   if (this.isModified('password')) {
-//     const hash = await bcrypt.hash(this.password, 10);
-//     this.password = hash;
-//   }
-//   next();
-// });
 
-// Export the schema to register with MongoDB
+const wishlistSchema = new Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Register",
+    required: true,
+  },
+  products: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
+});
+
 module.exports = {
     Timezone: mongoose.model('Timezone', TimezoneSchema),
     Country: mongoose.model('Country', CountrySchema),
@@ -363,5 +369,6 @@ module.exports = {
     AuditLog: mongoose.model('AuditLog', auditLogSchema),
     Product: mongoose.model('Product',ProductSchema),
     Cart: mongoose.model('Cart',CartSchema),
-    Register : mongoose.model("Register", registerSchema)
+    Register : mongoose.model("Register", registerSchema),
+    Wishlist : mongoose.model("Wishlist", wishlistSchema)
 }
