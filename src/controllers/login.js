@@ -50,6 +50,7 @@ const userLogin = async (req, res) => {
                 full_name: user.full_name,
                 email: user.email,
                 role: user.role,
+                object_id: user._id,
             }
         })
 

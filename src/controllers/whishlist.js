@@ -55,11 +55,26 @@ const deleteWhishlist = async function (req, res) {
 
 }
 
+const getSelecetdWhishlist = async function (req, res) {
+
+  const { userId } = req.params;
+
+  try {
+    const wishlist = await Wishlist.findOne({ userId }).populate('products');
+    const productIds = wishlist.products.map((product) => product._id.toString());
+    res.json({ productIds });
+  } catch (err) {
+    res.status(500).json({ error: 'Wishlist fetch failed' });
+  }
+
+};
+
 
 
 module.exports = {
   createWhishlist: createWhishlist,
   getWhishlist:getWhishlist,
   deleteWhishlist:deleteWhishlist,
+  getSelecetdWhishlist:getSelecetdWhishlist,
   
 };

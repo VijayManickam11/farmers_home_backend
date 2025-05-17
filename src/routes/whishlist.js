@@ -8,6 +8,7 @@ const app = Router();
 app.post("/wishlist", whishlist.createWhishlist);
 app.get("/wishlist/:userId", whishlist.getWhishlist);
 app.delete("/wishlist", whishlist.deleteWhishlist);
+app.get("/selecetdwishlist/:userId", whishlist.getSelecetdWhishlist);
 
 
 module.exports = app;
