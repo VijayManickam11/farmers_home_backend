@@ -3,8 +3,7 @@ const Wishlist = require("../models/mongo").Wishlist;
 const createWhishlist = async function (req, res) {
 
   const { userId, productId } = req.body;
-
-  console.log(req.body, "whishlist")
+ 
 
    try {
     let wishlist = await Wishlist.findOne({ userId });
@@ -38,21 +37,34 @@ const getWhishlist = async function (req, res) {
 
 const deleteWhishlist = async function (req, res) {
 
-    const { userId, productId } = req.body;
+  const { userId, productId } = req.query;
+
+  
+  if (!userId || !productId) {
+    return res.status(400).json({
+      success: false,
+      message: "userId and productId are required",
+    });
+  }
 
   try {
     const wishlist = await Wishlist.findOne({ userId });
-    if (wishlist) {
+
+    if (wishlist) {     
+
       wishlist.products = wishlist.products.filter(
-        (product) => product.toString() !== productId
+        (product) => product.toString() !== productId.toString()
       );
+
       await wishlist.save();
+      
     }
+
     res.status(200).json({ success: true, wishlist });
+
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
-
 }
 
 const getSelecetdWhishlist = async function (req, res) {
