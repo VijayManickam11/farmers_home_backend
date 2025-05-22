@@ -267,7 +267,9 @@ const ProductSchema = new Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
     is_active: { type: Boolean, default: true },
-    is_deleted: { type: Boolean, default: false }  // Added for soft deletion
+    is_deleted: { type: Boolean, default: false },  // Added for soft deletion
+    gst_rate: { type: Number, default: 0 }, // GST % e.g., 5, 12, 18
+    eco_tax: { type: Number, default: 3 }   // Optional fixed ₹/unit
   });
 
   ProductSchema.pre('save', function (next) {

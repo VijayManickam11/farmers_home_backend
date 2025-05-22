@@ -19,11 +19,12 @@ const userLogin = async (req, res) => {
             })
         }
 
-        const user = await Register.findOne({email});
+        const user = await Register.findOne({email:email});
+
         if(!user){
             return res.status(Constants.UNAUTHORIZED).json({
                 type: Constants.ERROR_MSG,
-                message: "Invalid email or password."
+                message: "Invalid email."
             });
         }
 
