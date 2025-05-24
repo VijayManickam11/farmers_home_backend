@@ -284,7 +284,7 @@ const ProductSchema = new Schema({
 
 const CartSchema = new Schema({
     cart_uid: { type: String, required: true },
-    // user: { type: Schema.Types.ObjectId, ref: 'User' },
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
     product: { type: Schema.Types.ObjectId, ref: 'Product' },
     quantity: { type: Number, default: 1 },
     is_active: { type: Boolean, default: true },

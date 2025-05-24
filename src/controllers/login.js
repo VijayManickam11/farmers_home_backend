@@ -51,6 +51,8 @@ const userLogin = async (req, res) => {
                 full_name: user.full_name,
                 email: user.email,
                 role: user.role,
+                address: user.user_address,
+                mobileNumber: user.mobile_number,
                 object_id: user._id,
             }
         })
