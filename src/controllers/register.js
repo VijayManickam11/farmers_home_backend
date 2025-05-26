@@ -1,7 +1,7 @@
 
 const bcrypt = require('bcrypt');
 const Constants = require("../lib/constants");
-const { Register } = require('../models/mongo');
+const { User } = require('../models/mongo');
 const uuidv1 = require("uuid").v1;
 
 const userRegister = async (req, res) => {
@@ -22,7 +22,7 @@ const userRegister = async (req, res) => {
             });
         }
 
-        const existingUser = await Register.findOne({
+        const existingUser = await User.findOne({
             $or: [{ email }, { mobile_number }]
         });
 
@@ -33,11 +33,11 @@ const userRegister = async (req, res) => {
             });
         }
 
-        const uid = uuidv1();
+        const user_uid = uuidv1();
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new Register({
-            uid,
+        const newUser = new User({
+            user_uid,
             full_name,
             email,
             mobile_number,
@@ -50,7 +50,7 @@ const userRegister = async (req, res) => {
         res.status(Constants.CREATED).json({
             type: Constants.SUCCESS,
             message: Constants.SUCCESS_MSG,
-            uid: newUser.uid
+            user_uid: newUser.user_uid
         });
 
     } catch (error) {

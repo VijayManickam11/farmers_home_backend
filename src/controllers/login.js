@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Constants = require('../../src/lib/constants');
-const { Register } = require('../models/mongo');
+const { User } = require('../models/mongo');
 const Router = express;
 
 const JWT_SECRET = Constants.ACCESS_TOKEN_SECERT;
@@ -19,7 +19,7 @@ const userLogin = async (req, res) => {
             })
         }
 
-        const user = await Register.findOne({email:email});
+        const user = await User.findOne({email:email});
 
         if(!user){
             return res.status(Constants.UNAUTHORIZED).json({
@@ -47,13 +47,12 @@ const userLogin = async (req, res) => {
             message: Constants.SUCCESS_MSG,
             token,
             user:{
-                uid: user.uid,
+                user_uid: user.user_uid,
                 full_name: user.full_name,
                 email: user.email,
                 role: user.role,
                 address: user.user_address,
                 mobileNumber: user.mobile_number,
-                object_id: user._id,
             }
         })
 
