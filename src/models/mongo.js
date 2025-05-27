@@ -384,6 +384,51 @@ wishlistSchema.pre("save", function (next) {
   next();
 });
 
+const orderSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  orderItems: [
+    {
+      name: { type: String },
+      qty: { type: Number },
+      image: { type: String },
+      price: { type: Number },
+      product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }
+    }
+  ],
+  shippingAddress: {
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    postalCode: { type: String },
+    phone: { type: String }
+  },
+  paymentMethod: { type: String },
+  paymentResult: {
+    id: { type: String },
+    status: { type: String },
+    update_time: { type: String },
+    email_address: { type: String }
+  },
+  itemsPrice: { type: Number },
+  shippingPrice: { type: Number },
+  taxPrice: { type: Number },
+  totalPrice: { type: Number },
+  isPaid: { type: Boolean, default: false },
+  paidAt: { type: Date, default: Date.now },
+  isDelivered: { type: Boolean, default: false },
+  deliveredAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+orderSchema.pre("save", function (next) {
+  now = new Date();
+  this.updated_at = now;
+  if (!this.created_at) {
+    this.created_at = now;
+  }
+  next();
+});
+
+
 module.exports = {
   Timezone: mongoose.model("Timezone", TimezoneSchema),
   Country: mongoose.model("Country", CountrySchema),
@@ -400,4 +445,5 @@ module.exports = {
   Cart: mongoose.model("Cart", CartSchema),
   Register: mongoose.model("Register", registerSchema),
   Wishlist: mongoose.model("Wishlist", wishlistSchema),
+  Order: mongoose.model("Order", orderSchema),
 };
