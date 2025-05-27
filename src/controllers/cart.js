@@ -16,70 +16,94 @@ const serverConfig = require("../../config/environment/serverConfig");
 const createCart = async function (req, res) {
   const { product_uid, user_uid } = req.body;
 
-  if (!product_uid) {
-    res.status(Constants.BAD_REQUEST);
-    return res.send({
-      type: Constants.ERROR_MSG,
-      message: "Mandatory Data Missing",
+  try {
+    if (!product_uid || !user_uid) {
+      res.status(Constants.BAD_REQUEST);
+      return res.send({
+        type: Constants.ERROR_MSG,
+        message: "Mandatory Data Missing",
+      });
+    }
+
+    let user_db = await User.findOne({
+      user_uid: user_uid,
+      is_active: true,
+      is_deleted: false,
     });
-  }
 
-  let product_db = await Product.findOne({
-    product_uid: product_uid,
-    is_active: true,
-    is_deleted: false,
-  });
+    if (!user_db) {
+      res.status(Constants.NOT_FOUND);
+      return res.send({
+        type: Constants.ERROR_MSG,
+        message: "Invalid user uid",
+      });
+    }
 
-  if (!product_db) {
-    res.status(Constants.NOT_FOUND);
-    return res.send({
-      type: Constants.ERROR_MSG,
-      message: "Invalid product uid",
+    let product_db = await Product.findOne({
+      product_uid: product_uid,
+      is_active: true,
+      is_deleted: false,
     });
-  }
 
-  //   let user_db = await User.findOne({
-  //     user_uid: user_uid,
-  //     is_active: true,
-  //     is_deleted: false,
-  //   });
+    if (!product_db) {
+      res.status(Constants.NOT_FOUND);
+      return res.send({
+        type: Constants.ERROR_MSG,
+        message: "Invalid product uid",
+      });
+    }
 
-  //   if (!user_db) {
-  //     res.status(Constants.NOT_FOUND);
-  //     return res.send({
-  //       type: Constants.ERROR_MSG,
-  //       message: "Invalid user uid",
-  //     });
-  //   }
+    //   let user_db = await User.findOne({
+    //     user_uid: user_uid,
+    //     is_active: true,
+    //     is_deleted: false,
+    //   });
 
-  let cart_data = await Cart.findOne({ product: product_db._id });
+    //   if (!user_db) {
+    //     res.status(Constants.NOT_FOUND);
+    //     return res.send({
+    //       type: Constants.ERROR_MSG,
+    //       message: "Invalid user uid",
+    //     });
+    //   }
 
-  if (!cart_data) {
-    const createData = {
-      cart_uid: uuidv1(),
+    let cart_data = await Cart.findOne({
       product: product_db._id,
-      // user: user_db._id,
-    };
-
-    cart_data = await Cart(createData).save();
-  } else {
-    cart_data["quantity"] = cart_data["quantity"] + 1;
-    console.log(cart_data)
-    cart_data.save();
-  }
-
-  if (cart_data) {
-    res.status(Constants.SUCCESS);
-    return res.send({
-      type: Constants.SUCCESS_MSG,
-      message: Constants.CREATION_SUCCESS,
-      data: cart_data,
+      user: user_db.id,
     });
-  } else {
-    return res.status(Constants.INTERNAL_ERROR).send({
-      type: Constants.ERROR_MSG,
-      message: Constants.INTERNAL_SERVER_ERROR,
-    });
+
+    if (!cart_data) {
+      const createData = {
+        cart_uid: uuidv1(),
+        product: product_db._id,
+        user: user_db._id,
+      };
+
+      cart_data = await Cart(createData).save();
+    } else {
+      cart_data["quantity"] = cart_data["quantity"] + 1;
+      console.log(cart_data);
+      cart_data.save();
+    }
+
+    if (cart_data) {
+      res.status(Constants.SUCCESS);
+      return res.send({
+        type: Constants.SUCCESS_MSG,
+        message: Constants.CREATION_SUCCESS,
+        data: cart_data,
+      });
+    } else {
+      return res.status(Constants.INTERNAL_ERROR).send({
+        type: Constants.ERROR_MSG,
+        message: Constants.INTERNAL_SERVER_ERROR,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(Constants.INTERNAL_ERROR)
+      .send({ type: Constants.ERROR_MSG, message: "Internal server error" });
   }
 };
 
@@ -136,38 +160,40 @@ const getAllCart = async function (req, res) {
   try {
     const { user_uid } = req.params;
 
-    // if (!user_uid) {
-    //   res.status(Constants.BAD_REQUEST);
-    //   return res.send({
-    //     type: Constants.ERROR_MSG,
-    //     message: "Mandatory Data Missing",
-    //   });
-    // }
+    if (!user_uid) {
+      res.status(Constants.BAD_REQUEST);
+      return res.send({
+        type: Constants.ERROR_MSG,
+        message: "Mandatory Data Missing",
+      });
+    }
 
-    // let user_db = await User.findOne({
-    // //   user_uid: user_uid,
-    //   is_active: true,
-    //   is_deleted: false,
-    // });
+    let user_db = await User.findOne({
+      user_uid: user_uid,
+      is_active: true,
+      is_deleted: false,
+    });
 
-    // if (!user_db) {
-    //   res.status(Constants.NOT_FOUND);
-    //   return res.send({
-    //     type: Constants.ERROR_MSG,
-    //     message: "Invalid user uid",
-    //   });
-    // }
+    if (!user_db) {
+      res.status(Constants.NOT_FOUND);
+      return res.send({
+        type: Constants.ERROR_MSG,
+        message: "Invalid user uid",
+      });
+    }
+
 
     const getCart = await Cart.find(
       {
         is_active: true,
         is_deleted: false,
+        user: user_db.id
       },
       "-_id"
     )
       .populate({ path: "product", select: "-_id" })
       .lean();
-    console.log(getCart)
+    console.log(getCart);
 
     return res.status(Constants.SUCCESS).send({
       type: Constants.SUCCESS_MSG,

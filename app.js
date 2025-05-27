@@ -21,6 +21,7 @@ const register = require("./src/routes/register");
 const userLogin = require("./src/routes/login");
 const whishlist = require("./src/routes/whishlist");
 const paymentRoutes = require("./src/routes/paymentRoutes")
+const order = require("./src/routes/order");
 
 // New app using express module
 const app = express();
@@ -53,7 +54,7 @@ app.use(products);
 app.use(cart);
 app.use(register);
 app.use(userLogin);
-app.use(whishlist);
+app.use(order);
 app.use(paymentRoutes);
 
 app.get('/', (req, res) =>

@@ -6,9 +6,9 @@ const { Router } = require("express");
 const app = Router();
 
 app.post("/wishlist", whishlist.createWhishlist);
-app.get("/wishlist/:userId", whishlist.getWhishlist);
+app.get("/wishlist/:user_uid", whishlist.getWhishlist);
 app.delete("/wishlist", whishlist.deleteWhishlist);
-app.get("/selecetdwishlist/:userId", whishlist.getSelecetdWhishlist);
+app.get("/selecetdwishlist/:user_uid", whishlist.getSelecetdWhishlist);
 
 
 module.exports = app;
