@@ -1,3 +1,4 @@
+require('dotenv').config(); 
 //ExpressJS Requirments
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -19,6 +20,7 @@ const cart = require("./src/routes/cart");
 const register = require("./src/routes/register");
 const userLogin = require("./src/routes/login");
 const whishlist = require("./src/routes/whishlist");
+const paymentRoutes = require("./src/routes/paymentRoutes")
 
 // New app using express module
 const app = express();
@@ -52,6 +54,7 @@ app.use(cart);
 app.use(register);
 app.use(userLogin);
 app.use(whishlist);
+app.use(paymentRoutes);
 
 app.get('/', (req, res) =>
 	res.json({ message: "Welcome to Farmer Application!!!" })

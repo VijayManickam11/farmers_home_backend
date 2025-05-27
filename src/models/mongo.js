@@ -357,6 +357,25 @@ const wishlistSchema = new Schema({
   ],
 });
 
+const paymentSchema = new mongoose.Schema({
+    razorpay_order_id: String,
+    razorpay_payment_id: String,
+    razorpay_signature: String,
+    payment_verified: Boolean,
+    paid_at: Date,
+    amount: Number,
+    currency: {
+        type: String,
+        default: 'INR'
+    },
+    customer_email: String,
+    customer_mobile: String,
+},
+    {
+        timestamps: true
+    }
+)
+
 module.exports = {
     Timezone: mongoose.model('Timezone', TimezoneSchema),
     Country: mongoose.model('Country', CountrySchema),
@@ -372,5 +391,6 @@ module.exports = {
     Product: mongoose.model('Product',ProductSchema),
     Cart: mongoose.model('Cart',CartSchema),
     Register : mongoose.model("Register", registerSchema),
-    Wishlist : mongoose.model("Wishlist", wishlistSchema)
+    Wishlist : mongoose.model("Wishlist", wishlistSchema),
+    PaymentDetails: mongoose.model("PaymentDetails", paymentSchema)
 }
