@@ -11,6 +11,8 @@ const userLogin = async (req, res) => {
     try{
 
         const {email, password } = req.body;
+        
+        
 
         if(!email || !password){
             return res.status(Constants.BAD_REQUEST).json({
@@ -20,7 +22,7 @@ const userLogin = async (req, res) => {
         }
 
         const user = await User.findOne({email:email});
-
+        
         if(!user){
             return res.status(Constants.UNAUTHORIZED).json({
                 type: Constants.ERROR_MSG,

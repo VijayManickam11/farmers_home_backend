@@ -6,9 +6,10 @@ const uuidv1 = require("uuid").v1;
 
 const userRegister = async (req, res) => {
     try {
-        const { full_name, email, mobile_number, user_address, password, confirm_password } = req.body;
+        const { full_name, email, mobile_number, user_address, user_district,
+            user_area, user_pincode, password, confirm_password } = req.body;
 
-        if (!full_name || !email || !mobile_number || !password || !confirm_password) {
+        if (!full_name || !email || !mobile_number || !user_district || !password || !confirm_password) {
             return res.status(Constants.BAD_REQUEST).json({
                 type: Constants.ERROR_MSG,
                 message: "Mandatory Data Missing",
@@ -42,6 +43,9 @@ const userRegister = async (req, res) => {
             email,
             mobile_number,
             user_address,
+            user_district,
+            user_area,
+            user_pincode,
             password: hashedPassword
         });
 

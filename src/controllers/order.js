@@ -1,7 +1,7 @@
 const Order = require("../models/mongo.js").Order;
 
 // @desc    Create new order
-export const addOrder = async (req, res) => {
+ const addOrder = async (req, res) => {
   const {
     orderItems,
     shippingAddress,
@@ -54,7 +54,7 @@ export const addOrder = async (req, res) => {
 };
 
 // @desc    Get order by ID
-export const getOrderById = async (req, res) => {
+ const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate('user', 'name email');
     if (!order) return res.status(404).json({ message: 'Order not found' });
@@ -65,7 +65,7 @@ export const getOrderById = async (req, res) => {
 };
 
 // @desc    Get logged-in user's orders
-export const getMyOrders = async (req, res) => {
+ const getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id });
     res.json(orders);
@@ -75,7 +75,7 @@ export const getMyOrders = async (req, res) => {
 };
 
 // @desc    Update order to paid
-export const updateOrderToPaid = async (req, res) => {
+ const updateOrderToPaid = async (req, res) => {
   const { id } = req.params;
   const { paymentResult } = req.body;
 
@@ -105,7 +105,7 @@ export const updateOrderToPaid = async (req, res) => {
 };
 
 // @desc    Update order to delivered
-export const updateOrderToDelivered = async (req, res) => {
+ const updateOrderToDelivered = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: 'Order not found' });
@@ -119,3 +119,5 @@ export const updateOrderToDelivered = async (req, res) => {
     res.status(500).json({ message: 'Delivery update failed', error: error.message });
   }
 };
+
+module.exports = { addOrder, getOrderById, getMyOrders, updateOrderToPaid, updateOrderToDelivered }

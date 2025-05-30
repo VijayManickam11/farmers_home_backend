@@ -355,6 +355,16 @@ const registerSchema = new Schema({
     match: [/^\d{10}$/, "Please fill a valid 10-digit mobile number"],
   },
   user_address: { type: String, default: "" },
+  user_district: { type: String, required: true},
+  user_area: { type: String, default:""},
+  user_pincode: { type: Number, required: true, 
+        validate: {
+      validator: function (v) {
+        return /^\d{6}$/.test(v.toString());
+      },
+      message: props => `${props.value} is not a valid 6-digit pincode!`
+    }
+  },
   password: { type: String, required: true, minlength: 8 },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   is_verified: { type: Boolean, default: false },
